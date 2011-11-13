@@ -39,7 +39,7 @@ class Database extends \MySQLi {
 
     /**
      * Sets which database this database class will be using. If you switch it a lot it may confuse different models.
-     * @param $database string
+     * @param string $database
      * @return NULL
      */
     public function selectDatabase($database) {
@@ -48,7 +48,7 @@ class Database extends \MySQLi {
 
     /**
      * Executes a query which returns rows. Use it with SELECT statements.
-     * @param $query string
+     * @param string $query
      * @return int | FALSE
      */
     public function query($query) {
@@ -63,8 +63,8 @@ class Database extends \MySQLi {
     /**
      * Executes a "Simple" query, that is, a query which doesn't return rows. Returns the affected rows.
      * Use this for INSERT, UPDATE, DELETE statements. With an INSERT, you'll likely also want to run lastId();
-     * @param $query string
-     * @return int | FALSE
+     * @param string $query
+     * @return int | \FALSE
      */
     public function querySimple($query) {
         $this->lastQuery = $query;
@@ -109,9 +109,9 @@ class Database extends \MySQLi {
 
     /**
      * This function adds a row to the table with the specified criteria, returning the newly created row's ID
-     * @param $table string
-     * @param $data array (associative array of column -> value)
-     * @return int | FALSE
+     * @param string $table
+     * @param array $data (associative array of column -> value)
+     * @return int | \FALSE
      */
     public function insert($table, $data) {
         $sql = "INSERT INTO $table SET ";
@@ -131,8 +131,8 @@ class Database extends \MySQLi {
 
     /**
      * This function deletes row(s) from a table depending on the criteria
-     * @param $table string
-     * @param $where array (associative array of column -> value, AND separated)
+     * @param string $table
+     * @param array $where (associative array of column -> value, AND separated)
      * @return int | FALSE
      */
     public function delete($table, $where) {
@@ -154,10 +154,10 @@ class Database extends \MySQLi {
 
     /**
      * This function generates and executes a MySQL WHERE statement, returning the number of affected rows
-     * @param $table string
-     * @param $data array (associative array of column -> value)
-     * @param $where array (associative array of column -> value, AND separated)
-     * @return int | FALSE
+     * @param string $table
+     * @param array $data (associative array of column -> value)
+     * @param array $where (associative array of column -> value, AND separated)
+     * @return int | \FALSE
      */
     public function update($table, $data, $where) {
         $sql = "UPDATE $table SET ";
@@ -187,11 +187,11 @@ class Database extends \MySQLi {
 
     /**
      * This function generates and executes a SQL SELECT statement, returning the results
-     * @param $table string
-     * @param $columns array
-     * @param $where array (associative, column -> value)
-     * @param $limit int
-     * @param $offset int
+     * @param string $table
+     * @param array $columns
+     * @param array $where (associative, column -> value)
+     * @param int $limit
+     * @param int $offset
      * @return DatabaseResult | False
      */
     public function select($table, $columns, $where = array(), $limit = NULL, $offset = NULL) {
@@ -242,8 +242,8 @@ class Database extends \MySQLi {
     /**
      * This function executes the provided query, sets the lastQuery in the class, and returns the result
      * Note that not all queries will return rows. This function is protected as other query functions should run it
-     * @param @query string
-     * @return Resource
+     * @param string $query
+     * @return \Resource
      */
     protected function executeRawQuery($query) {
         $this->lastQuery = $query;
