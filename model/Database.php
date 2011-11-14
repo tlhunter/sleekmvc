@@ -5,7 +5,7 @@ namespace Sleek;
  */
 abstract class Model_Database extends Model_Base {
     /**
-     * @var Database
+     * @var \Sleek\Database
      */
     protected $db = NULL;
 

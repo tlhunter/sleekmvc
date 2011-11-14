@@ -17,11 +17,15 @@ interface Cache_Base {
 
     /**
      * Sets data $cache->key = $value
+     * @param string $key
+     * @param mixed $value
      */
     public function __set($key, $value);
 
     /**
      * Gets data $value = $cache->key
+     * @param string $key
+     * @return mixed
      */
     public function __get($key);
 
