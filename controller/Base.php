@@ -8,19 +8,19 @@ namespace Sleek;
 abstract class Controller_Base {
     /**
      * Contains data from the client's request (GET, POST, COOKIE, SERVER)
-     * @var Request
+     * @var \Sleek\Request
      */
     protected $request      = null;
 
     /**
      * Contains data useful for the response to the client (headers, etc.)
-     * @var Response
+     * @var \Sleek\Response
      */
     protected $response     = null;
 
     /**
      * Contains a way to get and set Session variables
-     * @var Session
+     * @var \Sleek\Session
      */
     protected $session      = null;
 
@@ -38,13 +38,13 @@ abstract class Controller_Base {
     }
 
     /**
-     * This function is run before the controller action
+     * This function is run before the controller action. Overwrite in your extended classes.
      * @return NULL
      */
     public function preAction() { }
 
     /**
-     * This function is run after the controller action
+     * This function is run after the controller action. Overwrite in your extended classes.
      * @return NULL
      */
     public function postAction() { }

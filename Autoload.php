@@ -42,6 +42,11 @@ class Autoload {
         throw new Exception_ClassNotFound($className);
     }
 
+    /**
+     * Registeres our autoloader
+     * @static
+     * @return void
+     */
     static public function register() {
         spl_autoload_register('\Sleek\Autoload::loader');
         ini_set('unserialize_callback_func', '\Sleek\Autoload::loader');

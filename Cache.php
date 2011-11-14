@@ -2,6 +2,9 @@
 namespace Sleek;
 
 class Cache {
+    /**
+     * @var \Sleek\Cache
+     */
     protected static $_instance         = NULL;
 
     private function __construct() {}
@@ -27,6 +30,13 @@ class Cache {
         return self::$_instance;
     }
 
+    /**
+     * Factory method for creating new caches. Returns a cache of the type specified.
+     * Uses configuration from APP_PATH/config.ini
+     * @static
+     * @param string $type
+     * @return null|Cache_APC|Cache_File|Cache_Memcache
+     */
     protected static function buildCache($type) {
         switch($type) {
         case 'memcache':

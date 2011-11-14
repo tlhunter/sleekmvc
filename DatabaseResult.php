@@ -1,26 +1,32 @@
 <?php
 namespace Sleek;
 
+/**
+ * Handles database results for iterating over database rows
+ */
 class DatabaseResult implements \Countable, \Iterator {
 
     /**
-     * This is our result set (extending mysqli_result had some weird bugs)
+     * Result set (extending mysqli_result had some weird bugs, so we encapsulate)
      * @var \mysqli_result
      */
     protected $result       = NULL;
 
     /**
-     * This is the number of rows being returned, calculatd once to be faster
+     * Number of rows being returned, calculated once to be faster
      * @var int
      */
     protected $count        = 0;
 
     /**
-     * This is the current row being looked at (works while iterating, now with ->fetch_*() functions)
+     * Current row being looked at (works while iterating, now with ->fetch_*() functions)
      * @var int
      */
     protected $index        = 0;
 
+    /**
+     * @param \mysqli_result $result
+     */
     public function __construct(\mysqli_result $result) {
         $this->result = $result;
         $this->count = $this->result->num_rows;
@@ -68,12 +74,20 @@ class DatabaseResult implements \Countable, \Iterator {
 
     // Lets us do foreach($result AS $row) type stuff (implements Iterator)
 
+    /**
+     * Used by implements iterator
+     * @return array
+     */
     public function current() {
         $row = $this->result->fetch_assoc();
         $this->result->data_seek($this->index);
         return $row;
     }
 
+    /**
+     * Used by implements iterator
+     * @return void
+     */
     public function next() {
         if ($this->index < $this->count - 1) {
             $this->result->data_seek($this->index + 1);
@@ -81,15 +95,27 @@ class DatabaseResult implements \Countable, \Iterator {
         $this->index++;
     }
 
+    /**
+     * Used by implements iterator
+     * @return int
+     */
     public function key() {
         return $this->index;
     }
 
+    /**
+     * Used by implements iterator
+     * @return void
+     */
     public function rewind() {
         $this->result->data_seek(0);
         $this->index = 0;
     }
 
+    /**
+     * Used by implements iterator
+     * @return bool
+     */
     public function valid() {
         if ($this->index >= 0 && $this->index < $this->count) {
             return TRUE;

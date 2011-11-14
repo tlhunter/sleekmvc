@@ -1,6 +1,9 @@
 <?php
 namespace Sleek;
 
+/**
+ * Class for interfacing with the app/config.ini file
+ */
 class Config {
     /**
      * The collection of all configuration values for this server
@@ -9,8 +12,7 @@ class Config {
     private static $configuration = null;
 
     /**
-     * This loads our configuration file
-     * @param string $config The file we want to load configuration from
+     * This loads our configuration file, assuming APP_DIR/config.ini
      * @return bool Whether or not the configuration file was parsed successfully
      */
     public static function load() {

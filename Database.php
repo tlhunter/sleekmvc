@@ -28,7 +28,7 @@ class Database extends \MySQLi {
 
     /**
      * Returns the singleton instance of the Database class
-     * @return Database
+     * @return \Sleek\Database
      */
     public static function getInstance() {
         if (!self::$_instance) {
@@ -49,7 +49,7 @@ class Database extends \MySQLi {
     /**
      * Executes a query which returns rows. Use it with SELECT statements.
      * @param string $query
-     * @return int | FALSE
+     * @return int|\FALSE
      */
     public function query($query) {
         $this->lastQuery = $query;
@@ -64,7 +64,7 @@ class Database extends \MySQLi {
      * Executes a "Simple" query, that is, a query which doesn't return rows. Returns the affected rows.
      * Use this for INSERT, UPDATE, DELETE statements. With an INSERT, you'll likely also want to run lastId();
      * @param string $query
-     * @return int | \FALSE
+     * @return int|\FALSE
      */
     public function querySimple($query) {
         $this->lastQuery = $query;
@@ -111,7 +111,7 @@ class Database extends \MySQLi {
      * This function adds a row to the table with the specified criteria, returning the newly created row's ID
      * @param string $table
      * @param array $data (associative array of column -> value)
-     * @return int | \FALSE
+     * @return int|\FALSE
      */
     public function insert($table, $data) {
         $sql = "INSERT INTO $table SET ";
@@ -133,7 +133,7 @@ class Database extends \MySQLi {
      * This function deletes row(s) from a table depending on the criteria
      * @param string $table
      * @param array $where (associative array of column -> value, AND separated)
-     * @return int | FALSE
+     * @return int|\FALSE
      */
     public function delete($table, $where) {
         $sql = "DELETE FROM $table WHERE ";
@@ -157,7 +157,7 @@ class Database extends \MySQLi {
      * @param string $table
      * @param array $data (associative array of column -> value)
      * @param array $where (associative array of column -> value, AND separated)
-     * @return int | \FALSE
+     * @return int|\FALSE
      */
     public function update($table, $data, $where) {
         $sql = "UPDATE $table SET ";
@@ -192,7 +192,7 @@ class Database extends \MySQLi {
      * @param array $where (associative, column -> value)
      * @param int $limit
      * @param int $offset
-     * @return DatabaseResult | False
+     * @return \Sleek\DatabaseResult|\FALSE
      */
     public function select($table, $columns, $where = array(), $limit = NULL, $offset = NULL) {
         if ($limit !== NULL) {

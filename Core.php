@@ -2,11 +2,29 @@
 namespace Sleek;
 
 class Core {
+    /**
+     * @var string
+     */
     protected $controllerName   = NULL;
+
+    /**
+     * @var \Sleek\Controller_Base
+     */
     protected $controller       = NULL;
+
+    /**
+     * @var string
+     */
     protected $actionName       = NULL;
+
+    /**
+     * @var array
+     */
     protected $arguments        = NULL;
 
+    /**
+     * Builds the request, tries to find the controller, executes pre action, action, post action, or 404
+     */
     public function __construct() {
         $request = Request::getInstance();
         $this->controllerName   = '\\App\\Controller_' . $request->urlController();
@@ -28,6 +46,11 @@ class Core {
         }
     }
 
+    /**
+     * Executes the 404 app controller action
+     * @static
+     * @return void
+     */
     public static function throw404() {
         $errorControllerName = '\\App\\Controller_' . Config::get('error_controller');
         $errorController = new $errorControllerName;
@@ -38,6 +61,14 @@ class Core {
         exit();
     }
 
+    /**
+     * Executes the specified controller action, passing along arguments
+     * @static
+     * @param string|Controller_Base $controller
+     * @param string $action
+     * @param array $arguments
+     * @return void
+     */
     public static function loadController($controller, $action, $arguments = array()) {
         if (is_string($controller)) {
             $controller = '\\App\\Controller_' . $controller;
