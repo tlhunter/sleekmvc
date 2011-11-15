@@ -67,6 +67,8 @@ class Response {
 
     /**
      * Sets a status code by taking the number and automatically adding the status text for the developer
+     * @link http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+     * @todo List needs to contain more entries... All of them?
      * @param int $code
      * @return bool
      */
@@ -74,9 +76,8 @@ class Response {
         if (headers_sent()) {
             return FALSE;
         }
+        
         $text = '';
-        # List needs to contain more entries
-        # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
         switch($code) {
             case '200':
                 $text = "OK";
