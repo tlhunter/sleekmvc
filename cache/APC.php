@@ -61,7 +61,7 @@ class Cache_APC implements Cache_Base {
      */
     public function replace($key, $value) {
         apc_delete($key);
-        return apc_store($key, $data, $this->expireTime);
+        return apc_store($key, $value, $this->expireTime);
     }
 
     /**
