@@ -34,15 +34,22 @@ class Core {
         try {
             $this->controller = new $this->controllerName;
         } catch (Exception_ClassNotFound $e) {
-            self::throw404();
+            self::display404();
         }
 
         if (method_exists($this->controller, $this->actionName)) {
+            // If the controller and action exist, we run that.
             $this->controller->preAction();
             self::loadController($this->controller, $this->actionName, $this->arguments);
             $this->controller->postAction();
+        } else if (method_exists($this->controller, 'noAction')) {
+            // If the controller exists, but the action doesn't, and we have a noAction, run that
+            $this->controller->preAction();
+            self::loadController($this->controller, 'noAction', $this->arguments);
+            $this->controller->postAction();
         } else {
-            self::throw404();
+            // Oh no, I can't find anything! Just run the 404 stuff!
+            self::display404();
         }
     }
 
@@ -51,7 +58,7 @@ class Core {
      * @static
      * @return void
      */
-    public static function throw404() {
+    public static function display404() {
         $errorControllerName = '\\App\\Controller_' . Config::get('error_controller');
         $errorController = new $errorControllerName;
         self::loadController(
