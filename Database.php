@@ -49,7 +49,7 @@ class Database extends \MySQLi {
     /**
      * Executes a query which returns rows. Use it with SELECT statements.
      * @param string $query
-     * @return int|\FALSE
+     * @return DatabaseResult|bool
      */
     public function query($query) {
         $this->lastQuery = $query;
