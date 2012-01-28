@@ -16,7 +16,7 @@ class Error {
      * @return void
      */
     public static function handler($errno, $errstr, $errfile, $errline, $errcontext) {
-        $errorClassName = '\\App\\Controller_' . Config::get('error_controller');
+        $errorClassName = Core::CONTROLLER_PREFIX . Config::get('error_controller');
         /**
          * @var $errorClass \App\Controller_Error
          */
@@ -33,7 +33,7 @@ class Error {
     public static function shutdown() {
         $error = error_get_last();
         if ($error['type'] == 1) {
-            $errorClassName = '\\App\\Controller_' . Config::get('error_controller');
+            $errorClassName = Core::CONTROLLER_PREFIX . Config::get('error_controller');
             /**
              * @var $errorClass \App\Controller_Error
              */

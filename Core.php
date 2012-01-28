@@ -2,6 +2,10 @@
 namespace Sleek;
 
 class Core {
+    const CONTROLLER_PREFIX     = '\\App\\Controller_';
+    const ACTION_PREFIX         = 'action_';
+    const NO_ACTION             = 'noAction';
+
     /**
      * @var string
      */
@@ -27,8 +31,8 @@ class Core {
      */
     public function __construct() {
         $request = Request::getInstance();
-        $this->controllerName   = '\\App\\Controller_' . $request->urlController();
-        $this->actionName       = 'action_' . $request->urlAction();
+        $this->controllerName   = self::CONTROLLER_PREFIX . $request->urlController();
+        $this->actionName       = self::ACTION_PREFIX . $request->urlAction();
         $this->arguments        = $request->urlArguments();
 
         try {
@@ -42,10 +46,10 @@ class Core {
             $this->controller->preAction();
             self::loadController($this->controller, $this->actionName, $this->arguments);
             $this->controller->postAction();
-        } else if (method_exists($this->controller, 'noAction')) {
+        } else if (method_exists($this->controller, self::NO_ACTION)) {
             // If the controller exists, but the action doesn't, and we have a noAction, run that
             $this->controller->preAction();
-            self::loadController($this->controller, 'noAction', $this->arguments);
+            self::loadController($this->controller, self::NO_ACTION, $this->arguments);
             $this->controller->postAction();
         } else {
             // Oh no, I can't find anything! Just run the 404 stuff!
@@ -59,7 +63,7 @@ class Core {
      * @return void
      */
     public static function display404() {
-        $errorControllerName = '\\App\\Controller_' . Config::get('error_controller');
+        $errorControllerName = self::CONTROLLER_PREFIX . Config::get('error_controller');
         $errorController = new $errorControllerName;
         self::loadController(
             $errorController,
@@ -78,7 +82,7 @@ class Core {
      */
     public static function loadController($controller, $action, $arguments = array()) {
         if (is_string($controller)) {
-            $controller = '\\App\\Controller_' . $controller;
+            $controller = self::CONTROLLER_PREFIX . $controller;
         }
         call_user_func_array(
             array(

@@ -3,6 +3,13 @@ namespace Sleek;
 
 class Request {
     /**
+     * These values need to match the values used in the .htaccess file
+     */
+    const GET_VAR_CONTROLLER    = 'controller';
+    const GET_VAR_ACTION        = 'action';
+    const GET_VAR_ARGUMENTS     = 'arguments';
+
+    /**
      * @var Request The singleton instance of our request class
      */
     static private $_instance   = NULL;
@@ -10,16 +17,22 @@ class Request {
     /**
      * @var array Array containing URL data
      */
-    static protected $url      = array();
+    static protected $url       = array();
 
     /**
      * Initializes the Request singleton, sets data from $_GET variables
      */
     private function __construct() {
-        self::$url['controller']   = (isset($_GET['controller']) ? ucfirst($_GET['controller']) : Config::get('default_controller'));
-        self::$url['action']       = (isset($_GET['action']) ? $_GET['action'] : Config::get('default_action'));
-        self::$url['arguments']    = isset($_GET['arg']) ? $_GET['arg'] : array();
-        unset($_GET['controller'], $_GET['action'], $_GET['arg']); // This data shouldn't be available to GET
+        self::$url[self::GET_VAR_CONTROLLER]   = (isset($_GET[self::GET_VAR_CONTROLLER]) ? ucfirst($_GET[self::GET_VAR_CONTROLLER]) : Config::get('default_controller'));
+        self::$url[self::GET_VAR_ACTION]       = (isset($_GET[self::GET_VAR_ACTION]) ? $_GET[self::GET_VAR_ACTION] : Config::get('default_action'));
+        self::$url[self::GET_VAR_ARGUMENTS]    = isset($_GET[self::GET_VAR_ARGUMENTS]) ? $_GET[self::GET_VAR_ARGUMENTS] : array();
+
+        // We don't want the URL paramaters accessible via GET
+        unset(
+            $_GET[self::GET_VAR_CONTROLLER],
+            $_GET[self::GET_VAR_ACTION],
+            $_GET[self::GET_VAR_ARGUMENTS]
+        );
     }
 
     /**
@@ -92,7 +105,7 @@ class Request {
      * @return string
      */
     public function urlController() {
-        return self::$url['controller'];
+        return self::$url[self::GET_VAR_CONTROLLER];
     }
 
     /**
@@ -100,7 +113,7 @@ class Request {
      * @return string
      */
     public function urlAction() {
-        return self::$url['action'];
+        return self::$url[self::GET_VAR_ACTION];
     }
 
     /**
@@ -112,12 +125,12 @@ class Request {
      */
     public function urlArguments($index = NULL) {
         if ($index != NULL) {
-            if (isset(self::$url['arguments'][$index])) {
-                return self::$url['arguments'][$index];
+            if (isset(self::$url[self::GET_VAR_ARGUMENTS][$index])) {
+                return self::$url[self::GET_VAR_ARGUMENTS][$index];
             } else {
                 return NULL;
             }
         }
-        return self::$url['arguments'];
+        return self::$url[self::GET_VAR_ARGUMENTS];
     }
 }
