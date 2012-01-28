@@ -120,11 +120,12 @@ class Request {
      * If $index is provided, returns the nth (zero based) URL argument (after controller and action)
      * E.G., if user requests /a/b/c/d/e, urlArguments(1) returns D
      * If $index is not provided, returns an array of all arguments
+     * Incorporates a bugfix by @_wzee
      * @param int $index
      * @return mixed
      */
     public function urlArguments($index = NULL) {
-        if ($index != NULL) {
+        if ($index !== NULL) {
             if (isset(self::$url[self::GET_VAR_ARGUMENTS][$index])) {
                 return self::$url[self::GET_VAR_ARGUMENTS][$index];
             } else {
