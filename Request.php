@@ -37,7 +37,7 @@ class Request {
 
     /**
      * Prevents the database class from being cloned
-     * @return NULL
+     * @return null
      */
     private function __clone() { }
 

@@ -13,7 +13,7 @@ class Session {
 
     /**
      * Prevents the class from being cloned
-     * @return NULL
+     * @return null
      */
     private function __clone() { }
 

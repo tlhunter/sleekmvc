@@ -39,13 +39,13 @@ abstract class Controller_Base {
 
     /**
      * This function is run before the controller action. Overwrite in your extended classes.
-     * @return NULL
+     * @return null
      */
     public function preAction() { }
 
     /**
      * This function is run after the controller action. Overwrite in your extended classes.
-     * @return NULL
+     * @return null
      */
     public function postAction() { }
 }
