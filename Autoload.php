@@ -7,6 +7,8 @@ class Autoload {
      * Handles PHP autoloading thanks to spl_autoload_register()
      * @param string $className The name of the class to be loaded
      * @return bool Whether or not the class was located
+     *
+     * @throws Exception_ClassNotFound
      */
     static public function loader($className) {
         list($namespace, $classNameParts) = explode('\\', $className);
