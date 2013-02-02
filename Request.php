@@ -3,13 +3,6 @@ namespace Sleek;
 
 class Request {
     /**
-     * These values need to match the values used in the .htaccess file
-     */
-    const GET_VAR_CONTROLLER    = 'controller';
-    const GET_VAR_ACTION        = 'action';
-    const GET_VAR_ARGUMENTS     = 'arguments';
-
-    /**
      * @var Request The singleton instance of our request class
      */
     static private $_instance   = NULL;
@@ -20,19 +13,58 @@ class Request {
     static protected $url       = array();
 
     /**
+     * @var array Array containing all registered routes
+     */
+    static protected $routes    = array();
+
+    /**
+     * @var array representation of the GET params (which are blown away somehow)
+     */
+    static protected $getParams = array();
+
+    /**
+     * @var array The matched controller and action for the current request
+     */
+    static protected $route     = array(
+        'controller'            => NULL,
+        'action'                => NULL
+    );
+
+    /**
+     * @var array Extra information captured from the URL with the current request
+     */
+    static protected $routeExtras = array();
+
+    /**
      * Initializes the Request singleton, sets data from $_GET variables
      */
     private function __construct() {
-        self::$url[self::GET_VAR_CONTROLLER]   = (isset($_GET[self::GET_VAR_CONTROLLER]) ? ucfirst($_GET[self::GET_VAR_CONTROLLER]) : Config::get('default_controller'));
-        self::$url[self::GET_VAR_ACTION]       = (isset($_GET[self::GET_VAR_ACTION]) ? $_GET[self::GET_VAR_ACTION] : Config::get('default_action'));
-        self::$url[self::GET_VAR_ARGUMENTS]    = isset($_GET[self::GET_VAR_ARGUMENTS]) ? $_GET[self::GET_VAR_ARGUMENTS] : array();
 
-        // We don't want the URL paramaters accessible via GET
-        unset(
-            $_GET[self::GET_VAR_CONTROLLER],
-            $_GET[self::GET_VAR_ACTION],
-            $_GET[self::GET_VAR_ARGUMENTS]
-        );
+    }
+
+    /**
+     * This lets the developer define a custom route. The first argument is a route string, the second is default information
+     *
+     * Magical route strings are 'controller' and 'action'.
+     *
+     * @static
+     * @param string $route
+     * @param array $defaults
+     * @see http://kohanaframework.org/3.0/guide/kohana/routing
+     */
+    public static function addRoute($route, $defaults) {
+        // PROVIDED PATTERN:    (/:controller(/:action(/:id)))    This format was inspired by Kohana
+        // OUTPUT REGEX:        ^(/(?P<controller>[a-zA-Z0-9_-]+)(/(?P<action>[a-zA-Z0-9_-]+)(/(?P<id>[a-zA-Z0-9_-]+))?)?)?/?$
+        // ADD a #^ at beginning
+        // ADD a /?# at end
+        // ( turns into (
+        // ) turns into )?
+        // :capture_name turns into (?P<$1>[a-zA-Z0-9_-]+)
+
+        $route = '#^' . Config::get('base_url') . $route . '/?#';
+        $route = str_replace(')', ')?', $route);
+        $route = preg_replace('#\:([a-z_]+)#', '(?P<$1>[a-zA-Z0-9_-]+)', $route);
+        self::$routes[$route] = $defaults;
     }
 
     /**
@@ -49,18 +81,24 @@ class Request {
         if (!self::$_instance) {
             self::$_instance = new Request();
         }
+
         return self::$_instance;
     }
 
     /**
-     * Returns some data from the GET superglobal, or NULL if not set
-     * @param string $key
-     * @return string|null
+     * Returns some data from the get request, an array if no key is provided, or NULL if not set
+     * @param null|string $key
+     * @return string|array|null
      */
-    public function get($key) {
-        if (isset($_GET[$key])) {
-            return $_GET[$key];
+    public function get($key = NULL) {
+        if (is_null($key)) {
+            return self::$getParams;
         }
+
+        if (isset(self::$getParams[$key])) {
+            return self::$getParams[$key];
+        }
+
         return NULL;
     }
 
@@ -102,36 +140,69 @@ class Request {
 
     /**
      * Gets the controller variable from the URL, or the default if not present
-     * @return string
+     * @return null|string
      */
-    public function urlController() {
-        return self::$url[self::GET_VAR_CONTROLLER];
+    public function getController() {
+        return self::$route['controller'];
     }
 
     /**
      * Gets the action variable from the URL, or the default if not present
-     * @return string
+     * @return null|string
      */
-    public function urlAction() {
-        return self::$url[self::GET_VAR_ACTION];
+    public function getAction() {
+        return self::$route['action'];
     }
 
     /**
-     * If $index is provided, returns the nth (zero based) URL argument (after controller and action)
-     * E.G., if user requests /a/b/c/d/e, urlArguments(1) returns D
-     * If $index is not provided, returns an array of all arguments
-     * Incorporates a bugfix by @_wzee
-     * @param int $index
-     * @return mixed
+     * Gets an array of the extra route items captured, e.g. the :id
+     * @return array The matched route extras
      */
-    public function urlArguments($index = NULL) {
-        if ($index !== NULL) {
-            if (isset(self::$url[self::GET_VAR_ARGUMENTS][$index])) {
-                return self::$url[self::GET_VAR_ARGUMENTS][$index];
-            } else {
-                return NULL;
+    public function getRouteExtras() {
+        return self::$routeExtras;
+    }
+
+    /**
+     * Attempts to find the route for the current request, also triggers the hunt for get params
+     *
+     * @param null|string $url An optional url to check against. If not set will use $_SERVER['REQUEST_URL']
+     * @return array Matching route information (self::$route)
+     */
+    public function findRoute($url = NULL) {
+        $url = $url ?: $_SERVER['REQUEST_URI'];
+        self::findGetParams($url);
+
+        foreach(self::$routes AS $pattern => $defaults) {
+            if (preg_match($pattern, $url, $matches)) {
+                // Found our matching route!
+                self::$route['controller'] = isset($matches['controller']) ? $matches['controller'] : $defaults['controller'];
+                self::$route['action'] = isset($matches['action']) ? $matches['action'] : $defaults['action'];
+                foreach($defaults AS $key => $value) {
+                    // preg_match stores a bunch of integer keys and string, only want the strings
+                    if (is_string($key) && $key != 'controller' && $key != 'action') {
+                        self::$routeExtras[$key] = isset($matches[$key]) ? $matches[$key] : $value;
+                    }
+                }
+                return self::$route;
             }
         }
-        return self::$url[self::GET_VAR_ARGUMENTS];
     }
+
+    /**
+     * Parses the URL to find any get paramaters
+     *
+     * @param string $url The URL of the request (starting with the first slash)
+     * @return array An associative array of get keys to values
+     */
+    private static function findGetParams($url) {
+        if (strpos($url, '?') !== FALSE) {
+            $parts = explode('?', $url);
+            if ($parts[1]) {
+                parse_str($parts[1], self::$getParams);
+                return self::$getParams;
+            }
+        }
+        return self::$getParams = array();
+    }
+
 }

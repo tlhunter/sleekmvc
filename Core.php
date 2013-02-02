@@ -31,9 +31,12 @@ class Core {
      */
     public function __construct() {
         $request = Request::getInstance();
-        $this->controllerName   = self::CONTROLLER_PREFIX . $request->urlController();
-        $this->actionName       = self::ACTION_PREFIX . $request->urlAction();
-        $this->arguments        = $request->urlArguments();
+
+        $request->findRoute();
+
+        $this->controllerName   = self::CONTROLLER_PREFIX . ucfirst($request->getController());
+        $this->actionName       = self::ACTION_PREFIX . $request->getAction();
+        $this->arguments        = $request->getRouteExtras();
 
         try {
             $this->controller = new $this->controllerName;
@@ -84,7 +87,7 @@ class Core {
         if (is_string($controller)) {
             $controller = self::CONTROLLER_PREFIX . $controller;
         }
-        call_user_func_array(
+        call_user_func(
             array(
                 $controller,
                 $action
