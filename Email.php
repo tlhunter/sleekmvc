@@ -46,12 +46,15 @@ class Email {
         if ($recipient) {
             $this->setRecipient($recipient);
         }
+
         if ($subject) {
             $this->setSubject($subject);
         }
+
         if ($body) {
             $this->setBody($body);
         }
+
         if ($sender) {
             $this->setSender($sender);
         }
@@ -63,12 +66,14 @@ class Email {
      */
     public function setRecipient($recipient) {
         $recipient = trim($recipient);
+
         if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
             $this->recipient = NULL;
             $this->lastError = "Invalid Email set as Recipient";
         } else {
             $this->recipient = $recipient;
         }
+
         return $this;
     }
 
@@ -78,6 +83,7 @@ class Email {
      */
     public function setSubject($subject) {
         $this->subject = $subject;
+
         return $this;
     }
 
@@ -87,6 +93,7 @@ class Email {
      */
     public function setBody($body) {
         $this->body = $body;
+
         return $this;
     }
 
@@ -95,6 +102,7 @@ class Email {
      */
     public function setTypeHtml() {
         $this->html = TRUE;
+
         return $this;
     }
 
@@ -103,6 +111,7 @@ class Email {
      */
     public function setTypeText() {
         $this->html = FALSE;
+
         return $this;
     }
 
@@ -112,12 +121,14 @@ class Email {
      */
     public function setSender($sender) {
         $sender = trim($sender);
+
         if (!filter_var($sender, FILTER_VALIDATE_EMAIL)) {
             $this->sender = NULL;
             $this->lastError = "Invalid Email set as Sender";
         } else {
             $this->sender = $sender;
         }
+
         return $this;
     }
 
@@ -137,8 +148,10 @@ class Email {
             if ($this->html) {
                 $headers .= "\r\nContent-type: text/html";
             }
+
             return mail($this->recipient, $this->subject, $this->body, $headers);
         }
+
         return FALSE;
     }
 

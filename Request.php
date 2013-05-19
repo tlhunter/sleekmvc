@@ -38,9 +38,13 @@ class Request {
     /**
      * Initializes the Request singleton, sets data from $_GET variables
      */
-    private function __construct() {
+    private function __construct() { }
 
-    }
+    /**
+     * Prevents the request class from being cloned
+     * @return null
+     */
+    private function __clone() { }
 
     /**
      * This lets the developer define a custom route. The first argument is a route string, the second is default information
@@ -66,12 +70,6 @@ class Request {
         $route = preg_replace('#\:([a-z_]+)#', '(?P<$1>[a-zA-Z0-9_-]+)', $route);
         self::$routes[$route] = $defaults;
     }
-
-    /**
-     * Prevents the database class from being cloned
-     * @return null
-     */
-    private function __clone() { }
 
     /**
      * Returns the singleton instance of the Database class
@@ -111,6 +109,7 @@ class Request {
         if (isset($_POST[$key])) {
             return $_POST[$key];
         }
+
         return NULL;
     }
 
@@ -123,6 +122,7 @@ class Request {
         if (isset($_COOKIE[$key])) {
             return $_COOKIE[$key];
         }
+
         return NULL;
     }
 
@@ -135,6 +135,7 @@ class Request {
         if (isset($_SERVER[$key])) {
             return $_SERVER[$key];
         }
+
         return NULL;
     }
 
@@ -183,6 +184,7 @@ class Request {
                         self::$routeExtras[$key] = isset($matches[$key]) ? $matches[$key] : $value;
                     }
                 }
+
                 return self::$route;
             }
         }
@@ -202,6 +204,7 @@ class Request {
                 return self::$getParams;
             }
         }
+
         return self::$getParams = array();
     }
 

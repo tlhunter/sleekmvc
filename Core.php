@@ -68,10 +68,12 @@ class Core {
     public static function display404() {
         $errorControllerName = self::CONTROLLER_PREFIX . Config::get('error_controller');
         $errorController = new $errorControllerName;
+
         self::loadController(
             $errorController,
             'action_404'
         );
+
         exit();
     }
 
@@ -87,6 +89,7 @@ class Core {
         if (is_string($controller)) {
             $controller = self::CONTROLLER_PREFIX . $controller;
         }
+
         call_user_func(
             array(
                 $controller,

@@ -8,6 +8,7 @@ class Cache {
     protected static $_instance         = NULL;
 
     private function __construct() {}
+
     private function __clone() {}
 
     /**

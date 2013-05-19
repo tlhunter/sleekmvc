@@ -25,6 +25,7 @@ class Session {
         if (!self::$_instance) {
             self::$_instance = new Session();
         }
+
         return self::$_instance;
     }
 
@@ -37,6 +38,7 @@ class Session {
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
         }
+
         return NULL;
     }
 

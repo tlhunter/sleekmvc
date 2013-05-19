@@ -13,11 +13,14 @@ class Autoload {
     static public function loader($className) {
         list($namespace, $classNameParts) = explode('\\', $className);
         $rootDir = '';
+
         if (!$classNameParts) { # no namespace
             $rootDir = VENDOR_DIR;
+
             $filename = $rootDir . $namespace . '.php';
         } else {
             $classNameParts = explode('_', $classNameParts);
+
             if ($namespace == 'Sleek') {
                 $rootDir = SYSTEM_DIR;
             } else if ($namespace == 'App') {
@@ -31,11 +34,13 @@ class Autoload {
             for($i = 0; $i < count($classNameParts) - 1; $i++) {
                 $filename .= lcfirst($classNameParts[$i]) . '/';
             }
+
             $filename .= $classNameParts[$i++] . '.php';
         }
 
         if (file_exists($filename)) {
             include_once($filename);
+
             if (class_exists($className) || interface_exists($className)) {
                 return TRUE;
             }

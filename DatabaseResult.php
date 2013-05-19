@@ -92,6 +92,7 @@ class DatabaseResult implements \Countable, \Iterator {
         if ($this->index < $this->count - 1) {
             $this->result->data_seek($this->index + 1);
         }
+
         $this->index++;
     }
 
@@ -120,6 +121,7 @@ class DatabaseResult implements \Countable, \Iterator {
         if ($this->index >= 0 && $this->index < $this->count) {
             return TRUE;
         }
+
         return FALSE;
     }
 

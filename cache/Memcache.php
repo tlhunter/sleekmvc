@@ -48,6 +48,7 @@ class Cache_Memcache implements Cache_Base {
                 $this->connectedServers[] = $server;
             }
         }
+
         if (!$this->servers) {
             throw new \Exception;
         }

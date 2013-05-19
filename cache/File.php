@@ -49,12 +49,15 @@ class Cache_File implements Cache_Base {
     public function set($key, $value) {
         $filename = $this->getFileName($key);
         $dataSerialized = serialize($value);
+
         $fh = fopen($filename, 'w');
         if (!$fh) {
             return FALSE;
         }
+
         fwrite($fh, $dataSerialized);
         fclose($fh);
+
         return TRUE;
     }
 
@@ -68,10 +71,12 @@ class Cache_File implements Cache_Base {
         if (!file_exists($filename)) {
             return NULL;
         }
+
         $data = file_get_contents($filename);
         if (!$data) {
             return NULL;
         }
+
         return unserialize($data);
     }
 
@@ -95,6 +100,7 @@ class Cache_File implements Cache_Base {
         if (!file_exists($filename)) {
             return FALSE;
         }
+
         return @unlink($filename);
     }
 

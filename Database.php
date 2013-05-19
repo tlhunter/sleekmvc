@@ -34,6 +34,7 @@ class Database extends \MySQLi {
         if (!self::$_instance) {
             self::$_instance = new Database();
         }
+
         return self::$_instance;
     }
 
@@ -54,9 +55,11 @@ class Database extends \MySQLi {
     public function query($query) {
         $this->lastQuery = $query;
         $result = parent::query($query);
+
         if ($result) {
             return is_bool($result) ? $result : new DatabaseResult($result);
         }
+
         return FALSE;
     }
 
@@ -69,9 +72,11 @@ class Database extends \MySQLi {
     public function querySimple($query) {
         $this->lastQuery = $query;
         $result = $this->query($query);
+
         if ($result) {
             return $this->affected_rows;
         }
+
         return FALSE;
     }
 
@@ -116,9 +121,11 @@ class Database extends \MySQLi {
     public function insert($table, $data) {
         $sql = "INSERT INTO $table SET ";
         $interim = array();
+
         foreach($data AS $key => $value) {
             $interim[] = "`$key` = '" . self::real_escape_string($value) . "'";
         }
+
         $data = implode($interim, ',');
         $sql .= $data;
 
@@ -138,9 +145,11 @@ class Database extends \MySQLi {
     public function delete($table, $where) {
         $sql = "DELETE FROM $table WHERE ";
         $interim = array();
+
         foreach($where AS $key => $value) {
             $interim[] = "`$key` = '" . self::real_escape_string($value) . "'";
         }
+
         $data = implode($interim, ' AND ');
         $sql .= $data;
 
@@ -162,9 +171,11 @@ class Database extends \MySQLi {
     public function update($table, $data, $where) {
         $sql = "UPDATE $table SET ";
         $interim = array();
+
         foreach($data AS $key => $value) {
             $interim[] = "`$key` = '" . self::real_escape_string($value) . "'";
         }
+
         $data = implode($interim, ',');
         $sql .= $data;
 
